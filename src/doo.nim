@@ -1,17 +1,17 @@
 {.experimental: "strictFuncs".}
-import doo / [utils, serde]
+import doopkg / [util, serde]
 import colorizeEcho
 import os
 
-if not fileExists ".git":
-  colorizeEcho "[red]Not [red]a [red]git [red]repository."
+if not dirExists ".git":
+  colorizeEcho "[red]Not a git repository."
   quit(1)
 
 proc askTitle: string =
   stdout.write "Title (Required) > "
   result = stdin.readLine
   if result == "":
-    colorizeEcho "[red]Title [red]is [red]required."
+    colorizeEcho "[red]Title is required."
     return askTitle()
 
 proc askDescription: string =
@@ -19,27 +19,28 @@ proc askDescription: string =
   result = stdin.readLine
 
 
-proc def {.cmd.} =
-  result = 0
-  var
-    todos = loadTodos()
+proc add {.cmd.} =
   let
     title = askTitle()
     description = askDescription()
+  loadTodos()
+  .addTodo(newTodo(title, description, @[], false))
+  .save
 
-  todos.add newTodo(title, description)
-  save(todos)
-
-proc fin {.cmd.} =
+proc done(commit: bool) {.cmd.} =
   discard
 
-proc del {.cmd.} =
+proc rm {.cmd.} =
+  discard
+
+proc ls {.cmd.} =
   discard
 
 when isMainModule:
   import cligen
   dispatchMulti(
-    [defCmd, cmdName = "def"],
-    [finCmd, cmdName = "fin"],
-    [delCmd, cmdName = "del"],
+    [addCmd, cmdName = "add"],
+    [doneCmd, cmdName = "done"],
+    [rmCmd, cmdName = "rm"],
+    [lsCmd, cmdName = "ls"],
   )

@@ -1,0 +1,5 @@
+volumes:
+	- .:/workspace:cached
+	- ~/.zshrc:/root/.zshrc
+	- ~/.ssh:/root/.ssh
+	- ~/.config:/root/.config

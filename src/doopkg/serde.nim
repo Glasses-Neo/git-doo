@@ -2,7 +2,6 @@
 import os, streams
 import yaml/serialization
 
-
 let yamlPath = getCurrentDir()/".doo.yaml"
 
 proc newYamlStream(mode: FileMode): FileStream = newFileStream(yamlPath, mode)
@@ -14,7 +13,7 @@ type
     tags: seq[string]
     isDone: bool
 
-proc newTodo*(title, description: string; tags: seq[string] = @[];
+func newTodo*(title, description: string; tags: seq[string] = @[];
     isDone = false): Todo =
   result = Todo(
     title: title,
@@ -23,10 +22,15 @@ proc newTodo*(title, description: string; tags: seq[string] = @[];
     isDone: isDone,
   )
 
-proc save*(todos: seq[Todo]) =
+proc addTodo*(todoList: seq[Todo], todos: varargs[Todo]): seq[Todo] =
+  result = todoList
+  for todo in todos:
+    result.add todo
+
+proc save*(todoList: seq[Todo]) =
   var f = newYamlStream(fmWrite)
   defer: close f
-  dump(todos, f)
+  dump(todoList, f)
 
 proc loadTodos*: seq[Todo] =
   if not getFileSize(yamlPath) == 0 and fileExists(yamlPath):

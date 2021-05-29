@@ -11,12 +11,11 @@ binDir        = "bin"
 
 # Dependencies
 
-requires "nim >= 1.4.6"
+requires "nim >= 1.4.8"
 requires "cligen"
 requires "colorizeEcho"
 requires "yaml#head"
+requires "cascade"
 
 task renamebuild, "":
-  exec "nimble build"
-  withDir "./bin":
-    exec "mv doo git-doo"
+  selfExec "c --hints:off -d:musl --opt:size -o:bin/git-doo src/doo.nim"
